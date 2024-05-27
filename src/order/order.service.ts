@@ -29,20 +29,6 @@ export class OrderService {
     return order;
   }
 
-  // async getUserOrderTotalPrice(userId: number) {
-  //   const Order = await this.orderRepository.findOne({
-  //     relations: {
-  //       user: {
-  //         order: true,
-  //       },
-  //     },
-  //     where: {
-  //       user: { id: userId },
-  //     },
-  //   });
-  //   return Order.Total_Amount;
-  // }
-
   async addProductToOrder(dto: CreateOrderDto, user: any) {
     const lipstick = await this.lipstickService.getProductById(dto.lipstickId);
     if (!lipstick) {
