@@ -42,8 +42,14 @@ export class OrderController {
   }
 
   @UseGuards(JwtAuthGuard)
-  @Delete()
+  @Delete('all')
   delete(@Request() req: any) {
     return this.orderService.delete(req.user);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Delete(':id')
+  deleteOne(@Param('id') id: string, @Request() req: any) {
+    return this.orderService.deleteOne(+id, req.user);
   }
 }

@@ -9,10 +9,9 @@ import {
   UseInterceptors,
   UploadedFile,
   Response,
-  Query,
   UseGuards,
 } from '@nestjs/common';
-import { ApiTags, ApiConsumes, ApiQuery, ApiBearerAuth } from '@nestjs/swagger';
+import { ApiTags, ApiConsumes, ApiBearerAuth } from '@nestjs/swagger';
 import { FileInterceptor } from '@nestjs/platform-express';
 
 import { LipstickService } from './lipstick.service';
@@ -42,10 +41,8 @@ export class LipstickController {
   }
 
   @Get()
-  @ApiQuery({ name: 'brandId', required: false })
-  findAll(@Query('brandId') brandId: number): Promise<LipstickEntity[]> {
-    if (brandId) return this.lipstickService.findByCategoryId(brandId);
-    else return this.lipstickService.findAll();
+  findAll(): Promise<LipstickEntity[]> {
+    return this.lipstickService.findAll();
   }
 
   @Get('/image/:path')

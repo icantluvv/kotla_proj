@@ -6,6 +6,8 @@ import * as fs from 'fs';
 import { CreateLipstickDto } from './dto/create-lipstick.dto';
 import { UpdateLipstickDto } from './dto/update-lipstick.dto';
 import { LipstickEntity } from './entities/lipstick.entity';
+import { BrandService } from 'src/brand/brand.service';
+import { StoreService } from 'src/store/store.service';
 // import { CategoryEntity } from 'src/category/entities/category.entity';
 
 @Injectable()
@@ -13,9 +15,8 @@ export class LipstickService {
   constructor(
     @InjectRepository(LipstickEntity)
     private LipstickRepository: Repository<LipstickEntity>,
-
-    // @InjectRepository(CategoryEntity)
-    // private categoryRepository: Repository<CategoryEntity>,
+    private readonly brandService: BrandService,
+    private readonly storeService: StoreService,
   ) {}
 
   async create(
@@ -27,16 +28,14 @@ export class LipstickService {
     lipstick.Price = dto.Price;
     lipstick.Color = dto.Color;
     lipstick.Name = dto.Name;
+
+    const brand = await this.brandService.findOne(dto.brandId);
+    lipstick.brand = brand;
+
+    const store = await this.storeService.findOne(dto.storeId);
+    lipstick.store = store;
+
     const newLipstick = await this.LipstickRepository.save(lipstick);
-
-    // const category = await this.categoryRepository.findOne({
-    //   where: { id: dto.categoryId },
-    //   relations: ['room'],
-    // });
-
-    // category.room.push(card);
-
-    // await this.categoryRepository.save(category);
 
     return newLipstick;
   }
@@ -49,7 +48,7 @@ export class LipstickService {
     return this.LipstickRepository.findOneBy({ id });
   }
 
-  async findByCategoryId(brandId: number): Promise<LipstickEntity[]> {
+  async findByBrandId(brandId: number): Promise<LipstickEntity[]> {
     return this.LipstickRepository.createQueryBuilder('lipstick')
       .leftJoinAndSelect('lipstick.brand', 'brand')
       .where('lipstick.brandId = :brandId', { brandId })
@@ -68,13 +67,17 @@ export class LipstickService {
     if (dto.Color) toUpdate.Color = dto.Color;
     if (dto.Name) toUpdate.Name = dto.Name;
     if (dto.Price) toUpdate.Price = dto.Price;
-    // if (dto.categoryId) {
-    // const category = await this.categoryRepository.findOne({
-    //   where: { id: dto.categoryId },
-    //   relations: ['room'],
-    // });
-    // toUpdate.category = category;
-    // }
+
+    if (dto.brandId) {
+      const brand = await this.brandService.findOne(dto.brandId);
+      toUpdate.brand = brand;
+    }
+
+    if (dto.storeId) {
+      const store = await this.storeService.findOne(dto.storeId);
+      toUpdate.store = store;
+    }
+
     if (image) {
       if (toUpdate.image !== image.filename) {
         fs.unlink(`db_images/cards/${toUpdate.image}`, (err) => {

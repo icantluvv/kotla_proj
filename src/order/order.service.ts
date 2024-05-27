@@ -139,6 +139,30 @@ export class OrderService {
     return await this.orderRepository.save(userOrder);
   }
 
+  async deleteOne(id: number, user: any) {
+    const userOrder = await this.orderRepository.findOne({
+      relations: ['orderItems', 'orderItems.lipstick'],
+      where: {
+        user: user,
+      },
+    });
+
+    if (!userOrder) {
+      throw new NotFoundException(`Cart not found for user`);
+    }
+
+    const orderItem = userOrder.orderItems.find((item) => item.id === id);
+
+    if (!orderItem) {
+      throw new NotFoundException(`Product not found in cart`);
+    }
+
+    await this.orderItemsRepository.delete(orderItem.id);
+
+    userOrder.Total_Amount -= orderItem.lipstick.Price * orderItem.Quantity;
+    return await this.orderRepository.save(userOrder);
+  }
+
   async getUserBasket(user: any) {
     const userOrder = await this.orderRepository.findOne({
       relations: {

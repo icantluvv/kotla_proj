@@ -65,15 +65,13 @@ export class AuthService {
     };
   }
 
-  async validate(payload: { email: string /* role: string; id: number*/ }) {
+  async validate(payload: { email: string }) {
     const user = await this.userService.findByEmail(payload.email);
     if (!user) {
       throw new UnauthorizedException();
     }
     return {
       email: user.email,
-      // role: user.role,
-      // id: user.id,
     };
   }
 }

@@ -16,8 +16,10 @@ async function bootstrap() {
     origin: '*',
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
     preflightContinue: false,
+    credentials: true,
     optionsSuccessStatus: 204,
   });
+
   app.setGlobalPrefix('api');
   app.useGlobalPipes(new ValidationPipe());
 

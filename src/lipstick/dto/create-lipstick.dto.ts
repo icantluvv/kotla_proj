@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNumberString, IsString } from 'class-validator';
+import { IsNotEmpty, IsNumberString, IsString } from 'class-validator';
 
 export class CreateLipstickDto {
   @ApiProperty({
@@ -14,14 +14,22 @@ export class CreateLipstickDto {
   image: Express.Multer.File;
 
   @IsNumberString()
+  @IsNotEmpty()
   Price: number;
 
   @IsString()
+  @IsNotEmpty()
   Color: string;
 
   @IsString()
+  @IsNotEmpty()
   Name: string;
 
-  // @IsNumberString()
-  // categoryId: number;
+  @IsNumberString()
+  @IsNotEmpty()
+  brandId: number;
+
+  @IsNumberString()
+  @IsNotEmpty()
+  storeId: number;
 }

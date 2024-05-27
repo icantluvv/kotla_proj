@@ -1,5 +1,4 @@
 import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
 import { UserEntity } from './entities/user.entity';
 import { Repository } from 'typeorm';
 import { BadRequestException } from '@nestjs/common';
@@ -39,7 +38,6 @@ export class UsersService {
     const order = await this.orderService.createOrder(user);
     user.order = order;
 
-    // const role = await this.roleService.getRoleByRole('user');
     const role = await this.roleService.getRoleByRole('user');
 
     user.role = role;
@@ -72,23 +70,5 @@ export class UsersService {
     });
 
     return user;
-  }
-
-  async update(id: number, dto: UpdateUserDto) {
-    try {
-      const user = await this.repository.findOneBy({ id });
-      return await this.repository.update(user.id, dto);
-    } catch {
-      throw new BadRequestException(`no one`);
-    }
-  }
-
-  async delete(id: number) {
-    try {
-      const user = await this.repository.findOneBy({ id });
-      return await this.repository.delete(user.id);
-    } catch {
-      throw new BadRequestException(`netu`);
-    }
   }
 }

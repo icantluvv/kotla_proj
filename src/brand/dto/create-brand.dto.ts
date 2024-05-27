@@ -1,9 +1,4 @@
-import {
-  IsString,
-  IsNotEmpty,
-  IsNumber,
-  IsNumberString,
-} from 'class-validator';
+import { IsString, IsNotEmpty, IsNumber } from 'class-validator';
 
 export class CreateBrandDto {
   @IsNotEmpty()
@@ -11,10 +6,6 @@ export class CreateBrandDto {
   Brand_Name: string;
 
   @IsNotEmpty()
-  @IsNumberString()
-  Brand_Code: number;
-
-  @IsNotEmpty()
   @IsNumber()
-  count: number;
+  Brand_Code: number;
 }
