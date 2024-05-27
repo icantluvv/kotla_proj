@@ -1,7 +1,7 @@
 import { OrderItems } from './orderItems.entity';
 
 import {
-  // Column,
+  Column,
   CreateDateColumn,
   Entity,
   JoinColumn,
@@ -15,6 +15,9 @@ import { UserEntity } from 'src/users/entities/user.entity';
 export class Order {
   @PrimaryGeneratedColumn()
   id: number;
+
+  @Column()
+  Total_Amount: number;
 
   @CreateDateColumn()
   Purchase_Date: Date;

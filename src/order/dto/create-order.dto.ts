@@ -4,4 +4,8 @@ export class CreateOrderDto {
   @IsNotEmpty()
   @IsNumber()
   lipstickId: number;
+
+  @IsNotEmpty()
+  @IsNumber()
+  Quantity: number;
 }

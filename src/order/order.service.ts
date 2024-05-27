@@ -24,32 +24,24 @@ export class OrderService {
   async createOrder(user: UserEntity): Promise<Order> {
     const order = new Order();
     order.user = user;
+    order.Total_Amount = 0;
     await this.orderRepository.save(order);
     return order;
   }
 
-  async getUserOrderTotalPrice(userId: number) {
-    const order = await this.orderRepository.findOne({
-      where: { user: { id: userId } },
-      relations: {
-        orderItems: {
-          lipstick: true,
-        },
-      },
-    });
-
-    if (!order) {
-      throw new NotFoundException('Cart not found for user with ID: ' + userId);
-    }
-    if (order.orderItems == null) {
-      return 0;
-    }
-    // let sum = 0
-    // cart.cartItems.forEach(
-    //     (a) => (sum += a.room.prices[a.choose] * a.Quantity),
-    // )
-    // return sum
-  }
+  // async getUserOrderTotalPrice(userId: number) {
+  //   const Order = await this.orderRepository.findOne({
+  //     relations: {
+  //       user: {
+  //         order: true,
+  //       },
+  //     },
+  //     where: {
+  //       user: { id: userId },
+  //     },
+  //   });
+  //   return Order.Total_Amount;
+  // }
 
   async addProductToOrder(dto: CreateOrderDto, user: any) {
     const lipstick = await this.lipstickService.getProductById(dto.lipstickId);
@@ -69,26 +61,33 @@ export class OrderService {
     });
 
     if (!userOrder) {
-      // Создаем новую корзину, если ее не существует
       throw new NotFoundException(`Cart not found ${user.id}`);
     }
-    if (userOrder.orderItems.length != 0) {
-      throw new BadRequestException(`Корзина заполнена`);
-    }
-    // const quantity = Math.ceil(
-    //     (endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24),
-    // )
-    // const sum = product.prices[dto.choose] * quantity
 
-    // const cartItem = this.cartItemRepository.create({
-    //     room: product,
-    //     Quantity: quantity,
-    //     choose: dto.choose,
-    //     cart: userCart,
-    //     price: sum,
-    // })
+    let sum = 0;
+    userOrder.orderItems.forEach((a) => (sum += a.lipstick.Price * a.Quantity));
 
-    // return await this.cartItemRepository.save(cartItem)
+    const AddOrderItem = this.orderItemsRepository.create({
+      Quantity: dto.Quantity,
+      lipstick: lipstick,
+      order: userOrder,
+    });
+
+    const ToOrder = await this.orderRepository.findOne({
+      relations: {
+        user: {
+          order: true,
+        },
+      },
+      where: {
+        user: user.id,
+      },
+    });
+
+    ToOrder.Total_Amount = sum;
+    await this.orderRepository.save(ToOrder);
+
+    return await this.orderItemsRepository.save(AddOrderItem);
   }
 
   async findOneByUser(user: any) {
@@ -146,8 +145,10 @@ export class OrderService {
     await this.orderItemsRepository
       .createQueryBuilder()
       .delete()
-      .where('oderId = :orderId', { orderId: userOrder.id })
+      .where('orderId = :orderId', { orderId: userOrder.id })
       .execute();
+
+    userOrder.Total_Amount = 0;
 
     return await this.orderRepository.save(userOrder);
   }

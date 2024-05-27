@@ -27,11 +27,6 @@ export class OrderController {
     return this.orderService.addProductToOrder(dto, req.user);
   }
 
-  @UseGuards(JwtAuthGuard)
-  @Get('getUserOrderTotalPrice')
-  getUserOrderTotalPrice(@Request() req: any) {
-    return this.orderService.getUserOrderTotalPrice(req.user.id);
-  }
   @Roles('admin')
   @UseGuards(RolesGuard)
   @UseGuards(JwtAuthGuard)
