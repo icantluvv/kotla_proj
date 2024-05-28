@@ -114,7 +114,7 @@ export class CartService {
   }
 
   async delete(user: any) {
-    const userOrder = await this.cartRepository.findOne({
+    const userCart = await this.cartRepository.findOne({
       relations: {
         cartItems: {
           lipstick: true,
@@ -125,18 +125,18 @@ export class CartService {
       },
     });
 
-    if (!userOrder) {
+    if (!userCart) {
       throw new NotFoundException(`Cart not found for user`);
     }
     await this.cartItemsRepository
       .createQueryBuilder()
       .delete()
-      .where('orderId = :orderId', { orderId: userOrder.id })
+      .where('cartId = :cartId', { cartId: userCart.id })
       .execute();
 
-    userOrder.Total_Amount = 0;
+    userCart.Total_Amount = 0;
 
-    return await this.cartRepository.save(userOrder);
+    return await this.cartRepository.save(userCart);
   }
 
   async deleteOne(id: number, user: any) {
