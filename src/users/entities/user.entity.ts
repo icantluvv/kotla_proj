@@ -4,9 +4,11 @@ import {
   PrimaryGeneratedColumn,
   ManyToOne,
   OneToOne,
+  OneToMany,
 } from 'typeorm';
 import { Role } from 'src/roles/entities/role.entity';
 import { Cart } from 'src/cart/entities/cart.entity';
+import { OrderEntity } from 'src/order/entities/order.entity';
 
 @Entity('Client')
 export class UserEntity {
@@ -30,4 +32,7 @@ export class UserEntity {
 
   @OneToOne(() => Cart, (cart) => cart.user)
   cart: Cart;
+
+  @OneToMany(() => OrderEntity, (order) => order.user)
+  order: OrderEntity;
 }

@@ -11,6 +11,7 @@ import { CartModule } from './cart/cart.module';
 import { RoleModule } from './roles/roles.module';
 import { ScheduleModule } from './schedule/schedule.module';
 import { StoreModule } from './store/store.module';
+import { OrderModule } from './order/order.module';
 
 @Module({
   imports: [
@@ -28,6 +29,7 @@ import { StoreModule } from './store/store.module';
     LipstickModule,
     UserModule,
     AuthModule,
+    OrderModule,
     CartModule,
     RoleModule,
   ],
