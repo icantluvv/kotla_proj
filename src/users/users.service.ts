@@ -3,7 +3,7 @@ import { UserEntity } from './entities/user.entity';
 import { Repository } from 'typeorm';
 import { BadRequestException } from '@nestjs/common';
 import { Injectable } from '@nestjs/common';
-import { OrderService } from '../order/order.service';
+import { CartService } from '../cart/cart.service';
 import { InjectRepository } from '@nestjs/typeorm';
 import { config } from 'dotenv';
 import * as dotenv from 'dotenv';
@@ -15,7 +15,7 @@ export class UsersService {
   constructor(
     @InjectRepository(UserEntity)
     private readonly repository: Repository<UserEntity>,
-    private readonly orderService: OrderService,
+    private readonly cartService: CartService,
     private readonly roleService: RoleService,
   ) {}
 
@@ -35,8 +35,8 @@ export class UsersService {
       Nickname: dto.Nickname,
       Phone: dto.Phone,
     });
-    const order = await this.orderService.createOrder(user);
-    user.order = order;
+    const cart = await this.cartService.createCart(user);
+    user.cart = cart;
 
     const role = await this.roleService.getRoleByRole('user');
 

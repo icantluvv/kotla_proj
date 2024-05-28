@@ -6,21 +6,21 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 
-import { Order } from './order.entity';
+import { Cart } from './cart.entity';
 import { LipstickEntity } from 'src/lipstick/entities/lipstick.entity';
 
-@Entity('orderItems')
-export class OrderItems {
+@Entity('cartItems')
+export class CartItems {
   @PrimaryGeneratedColumn()
   id: number;
 
   @Column()
   Quantity: number;
 
-  @ManyToOne(() => LipstickEntity, (lipstick) => lipstick.orderItem)
+  @ManyToOne(() => LipstickEntity, (lipstick) => lipstick.cartItem)
   @JoinColumn()
   lipstick: LipstickEntity;
 
-  @ManyToOne(() => Order, (order) => order.orderItems)
-  order: Order;
+  @ManyToOne(() => Cart, (cart) => cart.cartItems)
+  cart: Cart;
 }

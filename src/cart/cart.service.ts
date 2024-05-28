@@ -4,40 +4,40 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { UserEntity } from 'src/users/entities/user.entity';
-import { Order } from './entities/order.entity';
+import { Cart } from './entities/cart.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { CreateOrderDto } from './dto/create-order.dto';
+import { CreateCartDto } from './dto/create-cart.dto';
 import { LipstickService } from 'src/lipstick/lipstick.service';
-import { OrderItems } from './entities/orderItems.entity';
+import { CartItems } from './entities/cartitems.entity';
 
 @Injectable()
-export class OrderService {
+export class CartService {
   constructor(
-    @InjectRepository(Order)
-    private readonly orderRepository: Repository<Order>,
-    @InjectRepository(OrderItems)
-    private readonly orderItemsRepository: Repository<OrderItems>,
+    @InjectRepository(Cart)
+    private readonly cartRepository: Repository<Cart>,
+    @InjectRepository(CartItems)
+    private readonly cartItemsRepository: Repository<CartItems>,
     private readonly lipstickService: LipstickService,
   ) {}
 
-  async createOrder(user: UserEntity): Promise<Order> {
-    const order = new Order();
-    order.user = user;
-    order.Total_Amount = 0;
-    await this.orderRepository.save(order);
-    return order;
+  async createCart(user: UserEntity): Promise<Cart> {
+    const cart = new Cart();
+    cart.user = user;
+    cart.Total_Amount = 0;
+    await this.cartRepository.save(cart);
+    return cart;
   }
 
-  async addProductToOrder(dto: CreateOrderDto, user: any) {
+  async addProductToOrder(dto: CreateCartDto, user: any) {
     const lipstick = await this.lipstickService.getProductById(dto.lipstickId);
     if (!lipstick) {
       throw new BadRequestException(`Такого товара нет`);
     }
 
-    const userOrder = await this.orderRepository.findOne({
+    const userCart = await this.cartRepository.findOne({
       relations: {
-        orderItems: {
+        cartItems: {
           lipstick: true,
         },
       },
@@ -46,23 +46,23 @@ export class OrderService {
       },
     });
 
-    if (!userOrder) {
+    if (!userCart) {
       throw new NotFoundException(`Cart not found ${user.id}`);
     }
 
     let sum = 0;
-    userOrder.orderItems.forEach((a) => (sum += a.lipstick.Price * a.Quantity));
+    userCart.cartItems.forEach((a) => (sum += a.lipstick.Price * a.Quantity));
 
-    const AddOrderItem = this.orderItemsRepository.create({
+    const AddOrderItem = this.cartItemsRepository.create({
       Quantity: dto.Quantity,
       lipstick: lipstick,
-      order: userOrder,
+      cart: userCart,
     });
 
-    const ToOrder = await this.orderRepository.findOne({
+    const ToCart = await this.cartRepository.findOne({
       relations: {
         user: {
-          order: true,
+          cart: true,
         },
       },
       where: {
@@ -70,16 +70,16 @@ export class OrderService {
       },
     });
 
-    ToOrder.Total_Amount = sum;
-    await this.orderRepository.save(ToOrder);
+    ToCart.Total_Amount = sum;
+    await this.cartRepository.save(ToCart);
 
-    return await this.orderItemsRepository.save(AddOrderItem);
+    return await this.cartItemsRepository.save(AddOrderItem);
   }
 
   async findOneByUser(user: any) {
-    const userOrder = await this.orderRepository.findOne({
+    const userOrder = await this.cartRepository.findOne({
       relations: {
-        orderItems: {
+        cartItems: {
           lipstick: true,
         },
       },
@@ -91,9 +91,9 @@ export class OrderService {
   }
 
   async findOne(lipstickId: number, user: any) {
-    const userOrder = await this.orderRepository.findOne({
+    const userOrder = await this.cartRepository.findOne({
       relations: {
-        orderItems: {
+        cartItems: {
           lipstick: true,
         },
       },
@@ -102,7 +102,7 @@ export class OrderService {
       },
     });
 
-    const lipstick = userOrder.orderItems;
+    const lipstick = userOrder.cartItems;
 
     if (!lipstick) {
       throw new NotFoundException(
@@ -114,9 +114,9 @@ export class OrderService {
   }
 
   async delete(user: any) {
-    const userOrder = await this.orderRepository.findOne({
+    const userOrder = await this.cartRepository.findOne({
       relations: {
-        orderItems: {
+        cartItems: {
           lipstick: true,
         },
       },
@@ -128,7 +128,7 @@ export class OrderService {
     if (!userOrder) {
       throw new NotFoundException(`Cart not found for user`);
     }
-    await this.orderItemsRepository
+    await this.cartItemsRepository
       .createQueryBuilder()
       .delete()
       .where('orderId = :orderId', { orderId: userOrder.id })
@@ -136,37 +136,37 @@ export class OrderService {
 
     userOrder.Total_Amount = 0;
 
-    return await this.orderRepository.save(userOrder);
+    return await this.cartRepository.save(userOrder);
   }
 
   async deleteOne(id: number, user: any) {
-    const userOrder = await this.orderRepository.findOne({
-      relations: ['orderItems', 'orderItems.lipstick'],
+    const userCart = await this.cartRepository.findOne({
+      relations: ['cartItems', 'cartItems.lipstick'],
       where: {
         user: user,
       },
     });
 
-    if (!userOrder) {
+    if (!userCart) {
       throw new NotFoundException(`Cart not found for user`);
     }
 
-    const orderItem = userOrder.orderItems.find((item) => item.id === id);
+    const cartItem = userCart.cartItems.find((item) => item.id === id);
 
-    if (!orderItem) {
+    if (!cartItem) {
       throw new NotFoundException(`Product not found in cart`);
     }
 
-    await this.orderItemsRepository.delete(orderItem.id);
+    await this.cartItemsRepository.delete(cartItem.id);
 
-    userOrder.Total_Amount -= orderItem.lipstick.Price * orderItem.Quantity;
-    return await this.orderRepository.save(userOrder);
+    userCart.Total_Amount -= cartItem.lipstick.Price * cartItem.Quantity;
+    return await this.cartRepository.save(userCart);
   }
 
   async getUserBasket(user: any) {
-    const userOrder = await this.orderRepository.findOne({
+    const userCart = await this.cartRepository.findOne({
       relations: {
-        orderItems: {
+        cartItems: {
           lipstick: true,
         },
       },
@@ -174,6 +174,6 @@ export class OrderService {
         user: user,
       },
     });
-    return userOrder;
+    return userCart;
   }
 }

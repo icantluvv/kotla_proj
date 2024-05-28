@@ -1,4 +1,4 @@
-import { OrderItems } from './orderItems.entity';
+import { CartItems } from './cartitems.entity';
 
 import {
   Column,
@@ -11,8 +11,8 @@ import {
 } from 'typeorm';
 import { UserEntity } from 'src/users/entities/user.entity';
 
-@Entity('order')
-export class Order {
+@Entity('cart')
+export class Cart {
   @PrimaryGeneratedColumn()
   id: number;
 
@@ -22,10 +22,10 @@ export class Order {
   @CreateDateColumn()
   Purchase_Date: Date;
 
-  @OneToOne(() => UserEntity, (user) => user.order)
+  @OneToOne(() => UserEntity, (user) => user.cart)
   @JoinColumn()
   user: UserEntity;
 
-  @OneToMany(() => OrderItems, (orderItem) => orderItem.order)
-  orderItems: OrderItems[];
+  @OneToMany(() => CartItems, (cartItem) => cartItem.cart)
+  cartItems: CartItems[];
 }

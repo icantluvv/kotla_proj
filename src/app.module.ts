@@ -7,7 +7,7 @@ import { LipstickModule } from './lipstick/lipstick.module';
 import { UserModule } from './users/users.module';
 import { StaffModule } from './staff/staff.module';
 import { AuthModule } from './auth/auth.module';
-import { OrderModule } from './order/order.module';
+import { CartModule } from './cart/cart.module';
 import { RoleModule } from './roles/roles.module';
 import { ScheduleModule } from './schedule/schedule.module';
 import { StoreModule } from './store/store.module';
@@ -28,7 +28,7 @@ import { StoreModule } from './store/store.module';
     LipstickModule,
     UserModule,
     AuthModule,
-    OrderModule,
+    CartModule,
     RoleModule,
   ],
   controllers: [],

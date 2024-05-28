@@ -8,23 +8,23 @@ import {
   Request,
   Delete,
 } from '@nestjs/common';
-import { OrderService } from './order.service';
-import { CreateOrderDto } from './dto/create-order.dto';
+import { CartService } from './cart.service';
+import { CreateCartDto } from './dto/create-cart.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth-guards';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { Roles } from 'src/decorators/role.decorator';
 import { RolesGuard } from 'src/auth/guards/roles.guards';
 
-@ApiTags('order')
+@ApiTags('cart')
 @ApiBearerAuth()
-@Controller('order')
+@Controller('cart')
 export class OrderController {
-  constructor(private readonly orderService: OrderService) {}
+  constructor(private readonly cartService: CartService) {}
 
   @UseGuards(JwtAuthGuard)
   @Post('addProductToOrder')
-  async addProductToOrder(@Body() dto: CreateOrderDto, @Request() req: any) {
-    return this.orderService.addProductToOrder(dto, req.user);
+  async addProductToOrder(@Body() dto: CreateCartDto, @Request() req: any) {
+    return this.cartService.addProductToOrder(dto, req.user);
   }
 
   @Roles('admin')
@@ -32,24 +32,24 @@ export class OrderController {
   @UseGuards(JwtAuthGuard)
   @Get(':id')
   findOne(@Param('id') id: string, @Request() req: any) {
-    return this.orderService.findOne(+id, req.user);
+    return this.cartService.findOne(+id, req.user);
   }
 
   @UseGuards(JwtAuthGuard)
   @Get()
   findUserOrder(@Request() req: any) {
-    return this.orderService.findOneByUser(req.user);
+    return this.cartService.findOneByUser(req.user);
   }
 
   @UseGuards(JwtAuthGuard)
   @Delete('all')
   delete(@Request() req: any) {
-    return this.orderService.delete(req.user);
+    return this.cartService.delete(req.user);
   }
 
   @UseGuards(JwtAuthGuard)
   @Delete(':id')
   deleteOne(@Param('id') id: string, @Request() req: any) {
-    return this.orderService.deleteOne(+id, req.user);
+    return this.cartService.deleteOne(+id, req.user);
   }
 }

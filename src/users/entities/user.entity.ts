@@ -5,8 +5,8 @@ import {
   ManyToOne,
   OneToOne,
 } from 'typeorm';
-import { Order } from 'src/order/entities/order.entity';
 import { Role } from 'src/roles/entities/role.entity';
+import { Cart } from 'src/cart/entities/cart.entity';
 
 @Entity('Client')
 export class UserEntity {
@@ -28,6 +28,6 @@ export class UserEntity {
   @ManyToOne(() => Role, (role) => role.user)
   role: Role;
 
-  @OneToOne(() => Order, (order) => order.user)
-  order: Order;
+  @OneToOne(() => Cart, (cart) => cart.user)
+  cart: Cart;
 }

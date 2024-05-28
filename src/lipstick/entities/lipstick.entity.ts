@@ -1,5 +1,5 @@
 import { BrandEntity } from 'src/brand/entities/brand.entity';
-import { OrderItems } from 'src/order/entities/orderItems.entity';
+import { CartItems } from 'src/cart/entities/cartitems.entity';
 import { StoreEntity } from 'src/store/entities/store.entity';
 import {
   Column,
@@ -27,8 +27,8 @@ export class LipstickEntity {
   @Column()
   Name: string;
 
-  @OneToMany(() => OrderItems, (orderItem) => orderItem.lipstick)
-  orderItem: OrderItems[];
+  @OneToMany(() => CartItems, (cartItem) => cartItem.lipstick)
+  cartItem: CartItems[];
 
   @ManyToOne(() => BrandEntity, (brand) => brand.lipstick, {
     eager: true,
