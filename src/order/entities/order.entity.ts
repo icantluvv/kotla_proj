@@ -3,9 +3,11 @@ import {
   Entity,
   JoinColumn,
   ManyToOne,
+  OneToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { UserEntity } from 'src/users/entities/user.entity';
+import { ToDelivery } from 'src/to_delivery/entities/to_delivery.entity';
 
 @Entity('order')
 export class OrderEntity {
@@ -27,4 +29,7 @@ export class OrderEntity {
   @ManyToOne(() => UserEntity, (user) => user.order)
   @JoinColumn()
   user: UserEntity;
+
+  @OneToOne(() => ToDelivery, (todelivery) => todelivery.order)
+  todelivery: ToDelivery;
 }

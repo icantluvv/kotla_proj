@@ -47,4 +47,8 @@ export class OrderService {
     });
     return userOrder;
   }
+
+  async findOne(id: number) {
+    return this.orderRepository.findOneBy({ id });
+  }
 }

@@ -12,6 +12,8 @@ import { RoleModule } from './roles/roles.module';
 import { ScheduleModule } from './schedule/schedule.module';
 import { StoreModule } from './store/store.module';
 import { OrderModule } from './order/order.module';
+import { ToDeliveryModule } from './to_delivery/to_delivery.module';
+import { SupplierModule } from './supplier/supplier.module';
 
 @Module({
   imports: [
@@ -32,6 +34,8 @@ import { OrderModule } from './order/order.module';
     OrderModule,
     CartModule,
     RoleModule,
+    ToDeliveryModule,
+    SupplierModule,
   ],
   controllers: [],
   providers: [],
