@@ -6,10 +6,12 @@ import { UserModule } from 'src/users/users.module';
 import { OrderEntity } from './entities/order.entity';
 import { CartModule } from 'src/cart/cart.module';
 import { LipstickModule } from 'src/lipstick/lipstick.module';
+import { OrderItems } from './entities/orderItems.entity';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([OrderEntity]),
+    TypeOrmModule.forFeature([OrderItems]),
     UserModule,
     CartModule,
     LipstickModule,
