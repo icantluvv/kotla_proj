@@ -25,6 +25,7 @@ import { SupplierModule } from './supplier/supplier.module';
       inject: [ConfigService],
       useFactory: getPostgresConfig,
     }),
+    UserModule,
     StaffModule,
     ScheduleModule,
     StoreModule,

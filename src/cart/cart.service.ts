@@ -50,14 +50,21 @@ export class CartService {
       throw new NotFoundException(`Cart not found ${user.id}`);
     }
 
-    let sum = 0;
-    userCart.cartItems.forEach((a) => (sum += a.lipstick.Price * a.Quantity));
+    const itemPrice = lipstick.Price * dto.Quantity;
+    userCart.Total_Amount += itemPrice;
 
+    await this.cartRepository.save(userCart);
+
+    // let sum = userCart.Total_Amount;
+    // userCart.cartItems.forEach((a) => (sum += a.lipstick.Price * a.Quantity));
+
+    // userCart.Total_Amount = sum;
     const AddOrderItem = this.cartItemsRepository.create({
       Quantity: dto.Quantity,
       lipstick: lipstick,
       cart: userCart,
     });
+    await this.cartItemsRepository.save(AddOrderItem);
 
     const ToCart = await this.cartRepository.findOne({
       relations: {
@@ -70,10 +77,9 @@ export class CartService {
       },
     });
 
-    ToCart.Total_Amount = sum;
     await this.cartRepository.save(ToCart);
 
-    return await this.cartItemsRepository.save(AddOrderItem);
+    return AddOrderItem;
   }
 
   async findOneByUser(user: any) {
@@ -128,6 +134,7 @@ export class CartService {
     if (!userCart) {
       throw new NotFoundException(`Cart not found for user`);
     }
+
     await this.cartItemsRepository
       .createQueryBuilder()
       .delete()
@@ -156,10 +163,14 @@ export class CartService {
     if (!cartItem) {
       throw new NotFoundException(`Product not found in cart`);
     }
+    userCart.Total_Amount -= cartItem.lipstick.Price * cartItem.Quantity;
 
+    // Удаляем элемент корзины
     await this.cartItemsRepository.delete(cartItem.id);
 
-    userCart.Total_Amount -= cartItem.lipstick.Price * cartItem.Quantity;
+    // Сохраняем обновленную корзину
+    // await this.cartRepository.save(userCart);
+
     return await this.cartRepository.save(userCart);
   }
 
@@ -174,6 +185,9 @@ export class CartService {
         user: user,
       },
     });
+    let sum = userCart.Total_Amount;
+    userCart.cartItems.forEach((a) => (sum += a.lipstick.Price * a.Quantity));
+    userCart.Total_Amount = sum;
     return userCart;
   }
 }
