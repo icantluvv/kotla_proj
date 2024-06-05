@@ -55,10 +55,6 @@ export class CartService {
 
     await this.cartRepository.save(userCart);
 
-    // let sum = userCart.Total_Amount;
-    // userCart.cartItems.forEach((a) => (sum += a.lipstick.Price * a.Quantity));
-
-    // userCart.Total_Amount = sum;
     const AddOrderItem = this.cartItemsRepository.create({
       Quantity: dto.Quantity,
       lipstick: lipstick,

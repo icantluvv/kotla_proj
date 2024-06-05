@@ -5,12 +5,15 @@ import { Repository } from 'typeorm';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { UsersService } from 'src/users/users.service';
 import { CartService } from 'src/cart/cart.service';
+import { OrderItems } from './entities/orderItems.entity';
 
 @Injectable()
 export class OrderService {
   constructor(
     @InjectRepository(OrderEntity)
     private orderRepository: Repository<OrderEntity>,
+    @InjectRepository(OrderItems)
+    private orderItems: Repository<OrderItems>,
     private readonly cartService: CartService,
     private readonly userService: UsersService,
   ) {}
@@ -36,6 +39,13 @@ export class OrderService {
     orderEntity.user = user;
 
     await this.orderRepository.save(orderEntity);
+
+    for (const cartItem of userBasket.cartItems) {
+      const orderItem = new OrderItems();
+      orderItem.order = orderEntity;
+      orderItem.lipstick = cartItem.lipstick;
+      await this.orderItems.save(orderItem);
+    }
     await this.cartService.delete(req.user);
     return orderEntity;
   }
