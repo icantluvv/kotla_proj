@@ -17,16 +17,7 @@ export class OrderEntity {
   id: number;
 
   @Column()
-  First_Name: string;
-
-  @Column()
-  Second_Name: string;
-
-  @Column()
-  email: string;
-
-  @Column()
-  Phone: string;
+  Total_Amount: number;
 
   @ManyToOne(() => UserEntity, (user) => user.order)
   @JoinColumn()

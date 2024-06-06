@@ -8,6 +8,7 @@ import { UserEntity } from './users/entities/user.entity';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { Role } from './roles/entities/role.entity';
 import * as dotenv from 'dotenv';
+import * as bcrypt from 'bcrypt';
 
 async function bootstrap() {
   dotenv.config();
@@ -65,11 +66,12 @@ async function createUserAndRoles(app: INestApplication<any>) {
     const initialUser = new UserEntity();
 
     initialUser.Nickname = process.env.username;
-    // const hashedPassword = await bcrypt.hash(
-    //   process.env.password,
-    //   Number(process.env.hashsalt),
-    // );
-    initialUser.password = process.env.password;
+    const hashedPassword = await bcrypt.hash(
+      process.env.password,
+      Number(process.env.hashsalt),
+    );
+    initialUser.password = hashedPassword;
+    // initialUser.password = process.env.password;
     initialUser.email = process.env.email;
     initialUser.Phone = process.env.phone;
     initialUser.role = roleadmin;

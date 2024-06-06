@@ -7,17 +7,21 @@ import { CartService } from '../cart/cart.service';
 import { InjectRepository } from '@nestjs/typeorm';
 import { config } from 'dotenv';
 import * as dotenv from 'dotenv';
+import * as bcrypt from 'bcrypt';
 import { RoleService } from 'src/roles/roles.service';
 config();
 
 @Injectable()
 export class UsersService {
+  private readonly hashSaltRounds: number;
   constructor(
     @InjectRepository(UserEntity)
     private readonly repository: Repository<UserEntity>,
     private readonly cartService: CartService,
     private readonly roleService: RoleService,
-  ) {}
+  ) {
+    this.hashSaltRounds = parseInt(process.env.HASH_SALT_ROUNDS);
+  }
 
   async create(dto: CreateUserDto): Promise<UserEntity> {
     const existingUser = await this.findByEmail(dto.email);
@@ -29,12 +33,18 @@ export class UsersService {
     }
     dotenv.config();
 
+    const hashedPassword = await bcrypt.hash(dto.password, this.hashSaltRounds);
+
     const user = await this.repository.save({
       email: dto.email,
-      password: dto.password,
+      // password: dto.password,
+      password: hashedPassword,
       Nickname: dto.Nickname,
       Phone: dto.Phone,
     });
+
+    user.password = hashedPassword;
+
     const cart = await this.cartService.createCart(user);
     user.cart = cart;
 
@@ -68,6 +78,10 @@ export class UsersService {
         email: email,
       },
     });
+
+    if (!user) {
+      console.log(`no one`);
+    }
 
     return user;
   }

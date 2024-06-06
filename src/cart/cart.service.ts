@@ -78,6 +78,8 @@ export class CartService {
     return AddOrderItem;
   }
 
+  async getTotalAmount() {}
+
   async findOneByUser(user: any) {
     const userOrder = await this.cartRepository.findOne({
       relations: {
@@ -181,7 +183,7 @@ export class CartService {
         user: user,
       },
     });
-    let sum = userCart.Total_Amount;
+    let sum = 0;
     userCart.cartItems.forEach((a) => (sum += a.lipstick.Price * a.Quantity));
     userCart.Total_Amount = sum;
     return userCart;
