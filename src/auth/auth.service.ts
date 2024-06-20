@@ -55,6 +55,8 @@ export class AuthService {
       throw new BadRequestException(`Такого юзера не существует`);
     }
 
+    const roles = user.role;
+
     const isPasswordValid = await bcrypt.compare(
       loginDto.password,
       user.password,
@@ -65,6 +67,7 @@ export class AuthService {
     }
     const payload = { email: user.email, role: user.role };
     return {
+      roles,
       token: this.jwtService.sign(payload),
     };
   }
