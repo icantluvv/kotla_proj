@@ -43,14 +43,6 @@ export class StaffService {
     return newLipstick;
   }
 
-  async findAll() {
-    return this.repository.find();
-  }
-
-  async findOne(id: number) {
-    return this.repository.findOneBy({ id });
-  }
-
   async update(id: number, dto: UpdateStaffDto) {
     const toUpdate = await this.repository.findOneBy({ id });
     if (!toUpdate) {
@@ -89,5 +81,13 @@ export class StaffService {
     });
 
     return user;
+  }
+
+  async findAll() {
+    return this.repository.find();
+  }
+
+  async findOne(id: number) {
+    return this.repository.findOneBy({ id });
   }
 }

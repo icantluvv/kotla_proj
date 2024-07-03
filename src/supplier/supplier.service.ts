@@ -34,14 +34,6 @@ export class SupplierService {
     return newLipstick;
   }
 
-  async findAll() {
-    return this.repository.find();
-  }
-
-  async findOne(id: number) {
-    return this.repository.findOneBy({ id });
-  }
-
   async update(id: number, dto: UpdateSupplierDto) {
     const toUpdate = await this.repository.findOneBy({ id });
     if (!toUpdate) {
@@ -71,5 +63,13 @@ export class SupplierService {
     });
 
     return user;
+  }
+
+  async findAll() {
+    return this.repository.find();
+  }
+
+  async findOne(id: number) {
+    return this.repository.findOneBy({ id });
   }
 }

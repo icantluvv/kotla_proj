@@ -29,6 +29,34 @@ export class CartService {
     return cart;
   }
 
+  async deleteOne(id: number, user: any) {
+    const userCart = await this.cartRepository.findOne({
+      relations: ['cartItems', 'cartItems.lipstick'],
+      where: {
+        user: user,
+      },
+    });
+
+    if (!userCart) {
+      throw new NotFoundException(`Cart not found for user`);
+    }
+
+    const cartItem = userCart.cartItems.find((item) => item.id === id);
+
+    if (!cartItem) {
+      throw new NotFoundException(`Product not found in cart`);
+    }
+    userCart.Total_Amount -= cartItem.lipstick.Price * cartItem.Quantity;
+
+    // Удаляем элемент корзины
+    await this.cartItemsRepository.delete(cartItem.id);
+
+    // Сохраняем обновленную корзину
+    // await this.cartRepository.save(userCart);
+
+    return await this.cartRepository.save(userCart);
+  }
+
   async addProductToOrder(dto: CreateCartDto, user: any) {
     const lipstick = await this.lipstickService.getProductById(dto.lipstickId);
     if (!lipstick) {
@@ -140,34 +168,6 @@ export class CartService {
       .execute();
 
     userCart.Total_Amount = 0;
-
-    return await this.cartRepository.save(userCart);
-  }
-
-  async deleteOne(id: number, user: any) {
-    const userCart = await this.cartRepository.findOne({
-      relations: ['cartItems', 'cartItems.lipstick'],
-      where: {
-        user: user,
-      },
-    });
-
-    if (!userCart) {
-      throw new NotFoundException(`Cart not found for user`);
-    }
-
-    const cartItem = userCart.cartItems.find((item) => item.id === id);
-
-    if (!cartItem) {
-      throw new NotFoundException(`Product not found in cart`);
-    }
-    userCart.Total_Amount -= cartItem.lipstick.Price * cartItem.Quantity;
-
-    // Удаляем элемент корзины
-    await this.cartItemsRepository.delete(cartItem.id);
-
-    // Сохраняем обновленную корзину
-    // await this.cartRepository.save(userCart);
 
     return await this.cartRepository.save(userCart);
   }

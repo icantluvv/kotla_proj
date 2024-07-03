@@ -16,14 +16,6 @@ export class StoreService {
     return this.repository.save(dto);
   }
 
-  async findAll() {
-    return this.repository.find();
-  }
-
-  async findOne(id: number) {
-    return this.repository.findOneBy({ id });
-  }
-
   async update(id: number, dto: UpdateStoreDto) {
     const toUpdate = await this.repository.findOneBy({ id });
     if (!toUpdate) {
@@ -39,5 +31,13 @@ export class StoreService {
 
   async delete(id: number) {
     return this.repository.delete(id);
+  }
+
+  async findAll() {
+    return this.repository.find();
+  }
+
+  async findOne(id: number) {
+    return this.repository.findOneBy({ id });
   }
 }

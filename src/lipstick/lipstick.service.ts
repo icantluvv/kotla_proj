@@ -40,21 +40,6 @@ export class LipstickService {
     return newLipstick;
   }
 
-  async findAll(): Promise<LipstickEntity[]> {
-    return this.LipstickRepository.find();
-  }
-
-  async findOne(id: number): Promise<LipstickEntity> {
-    return this.LipstickRepository.findOneBy({ id });
-  }
-
-  async findByBrandId(brandId: number): Promise<LipstickEntity[]> {
-    return this.LipstickRepository.createQueryBuilder('lipstick')
-      .leftJoinAndSelect('lipstick.brand', 'brand')
-      .where('lipstick.brandId = :brandId', { brandId })
-      .getMany();
-  }
-
   async update(
     id: number,
     dto: UpdateLipstickDto,
@@ -98,5 +83,20 @@ export class LipstickService {
 
   async getProductById(id: number) {
     return await this.LipstickRepository.findOneBy({ id: id });
+  }
+
+  async findAll(): Promise<LipstickEntity[]> {
+    return this.LipstickRepository.find();
+  }
+
+  async findOne(id: number): Promise<LipstickEntity> {
+    return this.LipstickRepository.findOneBy({ id });
+  }
+
+  async findByBrandId(brandId: number): Promise<LipstickEntity[]> {
+    return this.LipstickRepository.createQueryBuilder('lipstick')
+      .leftJoinAndSelect('lipstick.brand', 'brand')
+      .where('lipstick.brandId = :brandId', { brandId })
+      .getMany();
   }
 }
